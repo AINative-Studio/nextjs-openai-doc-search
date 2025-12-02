@@ -118,7 +118,7 @@ async function fetchExistingChecksums(accessToken: string): Promise<Map<string, 
           body: JSON.stringify({
             namespace: ZERODB_NAMESPACE,
             query: '',
-            limit: 10000, // Fetch all documents
+            limit: 100, // API maximum
             include_metadata: true,
           }),
         }
@@ -222,7 +222,9 @@ async function embedAndStoreDocuments(
           Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({
-          documents: documents,
+          texts: documents.map(d => d.text),
+          ids: documents.map(d => d.id),
+          metadatas: documents.map(d => d.metadata),
           namespace: ZERODB_NAMESPACE,
           model: ZERODB_MODEL,
           upsert: true,
@@ -610,10 +612,11 @@ async function generateEmbeddings() {
     }
   }
 
-  // Embed remaining documents
-  if (documentsToEmbed.length > 0) {
-    console.log(`Embedding and storing final batch of ${documentsToEmbed.length} documents...`)
-    await embedAndStoreDocuments(accessToken, documentsToEmbed)
+  // Embed remaining documents in batches
+  while (documentsToEmbed.length > 0) {
+    const batch = documentsToEmbed.splice(0, BATCH_SIZE)
+    console.log(`Embedding and storing batch of ${batch.length} documents... (${documentsToEmbed.length} remaining)`)
+    await embedAndStoreDocuments(accessToken, batch)
   }
 
   console.log('\n=== Embedding Generation Complete ===')

@@ -1,82 +1,129 @@
-# 🚀 Welcome to ZeroDB Platform!
+# 🚀 AI-Powered Doc Search with ZeroDB
 
-Build production-ready AI-powered documentation search in **under 5 minutes** with ZeroDB's intelligent vector database platform. No complex setup, no separate embedding services, just pure developer joy.
+> **Build semantic search in 5 minutes.** No OpenAI API needed. No separate embedding service. Just ZeroDB's auto-embedding magic.
 
-[![Production Ready](https://img.shields.io/badge/status-production%20ready-brightgreen)]() [![Test Coverage](https://img.shields.io/badge/coverage-89%25-brightgreen)]() [![ZeroDB v1.5](https://img.shields.io/badge/ZeroDB-v1.5.0-blue)]()
-
----
-
-## ✨ What You'll Build
-
-A fully functional AI documentation search engine powered by:
-- 🧠 **ZeroDB** - Managed vector database with built-in FREE embeddings
-- 🦙 **Meta Llama** - State-of-the-art open-source LLM
-- 🔍 **Semantic Search** - Natural language queries that understand intent
-- ⚡ **Next.js 13** - Lightning-fast React framework with edge runtime
-
-**Live in 5 minutes.** Seriously.
+[![Live Demo](https://img.shields.io/badge/demo-live-brightgreen)](https://doc-search-demo.railway.app) [![ZeroDB](https://img.shields.io/badge/powered_by-ZeroDB-blue)](https://ainative.studio) [![Test Coverage](https://img.shields.io/badge/coverage-89%25-brightgreen)]() [![License](https://img.shields.io/badge/license-Apache%202.0-blue)]()
 
 ---
 
-## 🎯 Why Developers Love ZeroDB
+## 💡 The Problem
 
-### Before ZeroDB 😫
+Building AI-powered documentation search traditionally requires:
+
+```javascript
+// The old way 😫
+1. OpenAI API → Generate embeddings ($$$)
+2. Supabase/Pinecone → Store vectors ($$$)
+3. OpenAI API again → Generate answers ($$$)
+
+// Total: 3 services, 3 API keys, 3 bills, complex orchestration
+```
+
+## ✨ The ZeroDB Solution
+
+```javascript
+// The ZeroDB way 🚀
+1. ZeroDB → Auto-embed + Search (FREE embeddings!)
+2. Meta Llama → Generate answers (affordable)
+
+// Total: 2 services, dead simple, save 60-86% on costs
+```
+
+**ZeroDB does the heavy lifting** so you can focus on building.
+
+---
+
+## 🎬 See It In Action
+
+Try these queries on [the live demo](https://doc-search-demo.railway.app):
+
+```
+"How do I configure the vector database?"
+"What are the API endpoints for semantic search?"
+"Show me code examples for embedding generation"
+```
+
+### What Makes This Special?
+
+- ⚡ **Instant semantic search** - Not keyword matching, actual understanding
+- 🧠 **AI-powered answers** - Streaming responses from your actual docs
+- 🎯 **Source attribution** - See which docs were used
+- 🔍 **Natural language** - Ask questions like you're talking to a developer
+- 💰 **Free embeddings** - ZeroDB generates them automatically
+
+---
+
+## 🎯 Why ZeroDB?
+
+### Traditional RAG Stack (Complex)
+
 ```mermaid
-graph LR
-    A[Your App] --> B[OpenAI Embeddings<br/>$$$]
-    B --> C[Supabase pgvector<br/>$$$]
-    C --> D[OpenAI GPT<br/>$$$]
+graph TB
+    A[Your App] --> B[OpenAI Embeddings API]
+    B --> |$20/month| C[Vector Database]
+    C --> |$25-70/month| D[OpenAI GPT API]
+    D --> |$50/month| E[User gets answer]
+
     style B fill:#ff6b6b
     style C fill:#ff6b6b
     style D fill:#ff6b6b
 ```
 
-**3 separate services. 3 API keys. 3 bills. Complex setup.**
+**Cost:** $95-140/month | **Setup:** 2-4 hours | **Services:** 3 | **Complexity:** High
 
-### With ZeroDB 🚀
+### ZeroDB Stack (Simple)
+
 ```mermaid
-graph LR
-    A[Your App] --> B[ZeroDB<br/>FREE embeddings!]
-    B --> C[Meta Llama<br/>Affordable]
+graph TB
+    A[Your App] --> B[ZeroDB Platform]
+    B --> |FREE embeddings!| C[Meta Llama API]
+    C --> |$20/month| D[User gets answer]
+
     style B fill:#51cf66
     style C fill:#51cf66
 ```
 
-**1 unified platform. Simple REST API. Auto-embedding. Done.**
+**Cost:** $20-35/month | **Setup:** 5 minutes | **Services:** 2 | **Complexity:** Low
+
+### The ZeroDB Advantage
+
+| Feature | Traditional Stack | ZeroDB Stack |
+|---------|------------------|--------------|
+| **Embedding Generation** | Manual (OpenAI) | Automatic (FREE!) |
+| **API Calls per Search** | 2-3 | 1 |
+| **Setup Complexity** | High | Low |
+| **Monthly Cost** | $95-140 | $20-35 |
+| **SDK Required** | Yes | No (pure REST) |
+| **Vendor Lock-in** | High | Low |
+
+**Save 60-86% on costs. Deploy in 5 minutes instead of 5 hours.**
 
 ---
 
-## 🎁 What You Get Out of the Box
+## ⚡ Quick Start
 
-✅ **FREE Embeddings** - BAAI/bge-small-en-v1.5 (384D) hosted on Railway
-✅ **Auto-Embedding Search** - No manual embedding generation needed
-✅ **Semantic Search** - Natural language queries that just work
-✅ **Production Ready** - Battle-tested with 89% test coverage
-✅ **Meta Llama Integration** - OpenAI-compatible API, lower costs
-✅ **Simple REST API** - No complex SDKs, just `fetch()` calls
-✅ **Streaming Responses** - Real-time AI answers
-✅ **Easy Deployment** - Deploy to Railway, Netlify, or any Node.js platform
+### Prerequisites
 
----
+- Node.js 18+ and pnpm
+- 5 minutes of your time
 
-## ⚡ Quick Start (5 Minutes)
-
-### Step 1: Get Your Free ZeroDB Account (30 seconds)
+### Step 1: Get Free ZeroDB Access (30 seconds)
 
 1. Visit [ainative.studio/dashboard](https://ainative.studio/dashboard)
-2. Sign up (email + password, no credit card required)
-3. Click **"New Project"** → Enable **"Vector Database"**
-4. Copy your **Project ID** (looks like `f3bd73fe-8e0b-42b7...`)
+2. Sign up (email only, no credit card)
+3. Click **"New Project"**
+4. Enable **"Vector Database"** feature
+5. Copy your **Project ID**
 
-**That's it!** Your managed vector database is live. 🎉
+**Done!** Your managed vector database is live with FREE embeddings. 🎉
 
-### Step 2: Get Meta Llama API Key (1 minute)
+### Step 2: Get Meta Llama Key (1 minute)
 
-1. Visit [llama.developer.meta.com/docs/overview](https://llama.developer.meta.com/docs/overview/)
+1. Visit [llama.developer.meta.com](https://llama.developer.meta.com/docs/overview/)
 2. Sign up and generate API key
-3. Copy your key (starts with `LLM|...`)
+3. Copy the key (starts with `LLM|...`)
 
-### Step 3: Clone & Install (1 minute)
+### Step 3: Clone & Configure (2 minutes)
 
 ```bash
 # Clone the repo
@@ -85,106 +132,85 @@ cd nextjs-openai-doc-search
 
 # Install dependencies
 pnpm install
-```
 
-### Step 4: Configure (1 minute)
-
-```bash
-# Copy environment template
+# Configure environment
 cp .env.example .env
 ```
 
 Edit `.env` with your credentials:
 
 ```env
-# Meta Llama (from step 2)
-META_API_KEY=LLM|your-key-here
-META_BASE_URL=https://api.llama.com/compat/v1
-META_MODEL=Llama-4-Maverick-17B-128E-Instruct-FP8
-
-# ZeroDB (from step 1)
+# ZeroDB Configuration (from Step 1)
 ZERODB_API_URL=https://api.ainative.studio
 ZERODB_PROJECT_ID=your-project-id-here
 ZERODB_EMAIL=your-ainative-email
 ZERODB_PASSWORD=your-ainative-password
+
+# Meta Llama Configuration (from Step 2)
+META_API_KEY=your-meta-llama-key
+META_BASE_URL=https://api.llama.com/compat/v1
+META_MODEL=Llama-4-Maverick-17B-128E-Instruct-FP8
 ```
 
-### Step 5: Generate Embeddings (1 minute)
+### Step 4: Generate Embeddings (1 minute)
 
 ```bash
+# ZeroDB automatically generates embeddings for your docs
 pnpm run embeddings
 ```
 
-This processes all `.mdx` files in your `pages/` directory and stores them in ZeroDB. The platform automatically generates embeddings for free!
+This processes all `.mdx` files in your `pages/` directory and stores them in ZeroDB. **The embeddings are generated for FREE** by ZeroDB's platform.
 
-### Step 6: Launch! (10 seconds)
+### Step 5: Launch! (10 seconds)
 
 ```bash
 pnpm dev
 ```
 
-Open [localhost:3000](http://localhost:3000) 🎊
+Open [localhost:3000](http://localhost:3000) and try searching your docs! 🎊
 
-**You now have a production-ready AI documentation search!**
-
----
-
-## 🧪 Try It Out
-
-### Example Queries
-
-Try searching your documentation:
-
-```
-💬 "How do I deploy to production?"
-💬 "What are the API endpoints?"
-💬 "Explain the configuration options"
-💬 "Show me code examples"
-```
-
-### How It Works
-
-The search dialog uses semantic search to find relevant documentation sections, then streams an AI-generated answer using Meta Llama based on your actual docs.
+Press `⌘+K` (Mac) or `Ctrl+K` (Windows) to open the search dialog.
 
 ---
 
-## 🏗️ How It Works (The Magic Behind the Scenes)
+## 🔥 The ZeroDB Magic
 
-### Traditional Doc Search (Complex)
+### Traditional Approach (Manual Embeddings)
 
-```javascript
-// Step 1: Generate embeddings (separate API call)
-const embeddings = await openai.embeddings.create({
-  input: query
-});  // $$$ OpenAI API
+```typescript
+// Step 1: Call OpenAI to generate embeddings
+const embeddingResponse = await openai.embeddings.create({
+  input: query,
+  model: "text-embedding-ada-002"  // $$$ costs money
+});
 
 // Step 2: Search vector database
 const results = await supabase.rpc('match_documents', {
-  query_embedding: embeddings.data[0].embedding
-});  // $$$ Supabase pgvector
+  query_embedding: embeddingResponse.data[0].embedding,
+  match_threshold: 0.7,
+  match_count: 5
+});
 
-// Step 3: Format context
+// Step 3: Format and call LLM
 const context = results.map(r => r.content).join('\n');
-
-// Step 4: Call LLM with context
-const response = await openai.chat.completions.create({
-  messages: [{ role: 'user', content: query + context }]
-});  // $$$ OpenAI API
+const completion = await openai.chat.completions.create({
+  messages: [{ role: 'user', content: `${context}\n\nQuestion: ${query}` }]
+});  // $$$ more costs
 ```
 
-**4 steps. 2-3 paid APIs. Complex orchestration.**
+**3 API calls. 2 paid services. Complex error handling.**
 
-### ZeroDB Doc Search (Simple)
+### ZeroDB Approach (Auto-Embeddings)
 
-```javascript
-// Step 1: Authenticate once
+```typescript
+// Step 1: Authenticate (once)
 const { access_token } = await fetch(`${ZERODB_API_URL}/v1/public/auth/login`, {
   method: 'POST',
   headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
   body: `username=${email}&password=${password}`
 }).then(r => r.json());
 
-// Step 2: Semantic search with auto-embedding (ONE API CALL!)
+// Step 2: Semantic search (ONE CALL - ZeroDB handles embedding!)
 const { results } = await fetch(
   `${ZERODB_API_URL}/v1/public/${PROJECT_ID}/embeddings/search`,
   {
@@ -194,7 +220,7 @@ const { results } = await fetch(
       'Authorization': `Bearer ${access_token}`
     },
     body: JSON.stringify({
-      query: "How do I deploy?",  // Plain text - ZeroDB handles embedding!
+      query: "How do I deploy?",  // Plain text - ZeroDB embeds it for FREE!
       limit: 5,
       threshold: 0.7,
       namespace: "documentation",
@@ -202,12 +228,8 @@ const { results } = await fetch(
     })
   }
 ).then(r => r.json());
-// ZeroDB automatically:
-// ✅ Generates embeddings (FREE!)
-// ✅ Searches vectors
-// ✅ Returns relevant context
 
-// Step 3: Build context and call Meta Llama
+// Step 3: Format and call Meta Llama
 const context = results.map(r => r.text || r.document).join('\n---\n');
 const stream = await fetch(`${META_BASE_URL}/chat/completions`, {
   method: 'POST',
@@ -223,21 +245,32 @@ const stream = await fetch(`${META_BASE_URL}/chat/completions`, {
 });
 ```
 
-**3 simple steps. 1 FREE embedding. Straightforward.**
+**2 API calls. 1 FREE embedding. Simple and clean.**
+
+### What ZeroDB Does For You
+
+When you call `/embeddings/search` with plain text:
+
+1. ✅ **Auto-generates embedding** using BAAI/bge-small-en-v1.5 (FREE!)
+2. ✅ **Searches vector index** with your query embedding
+3. ✅ **Returns ranked results** with similarity scores
+4. ✅ **Includes full metadata** for source attribution
+
+**You send text. ZeroDB handles the rest.**
 
 ---
 
-## 🎓 Understanding the Architecture
+## 📚 How It Works
 
-### System Overview
+### Architecture Overview
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│               Your Next.js Doc Search App                    │
+│                    Your Next.js App                          │
 │                                                              │
 │  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐ │
-│  │   Pages/     │    │ SearchDialog │    │  API Route   │ │
-│  │  *.mdx       │    │  Component   │    │ vector-search│ │
+│  │  Docs (.mdx) │    │ SearchDialog │    │  API Routes  │ │
+│  │   Content    │    │  Component   │    │vector-search │ │
 │  └──────┬───────┘    └──────┬───────┘    └──────┬───────┘ │
 │         │                   │                    │          │
 └─────────┼───────────────────┼────────────────────┼──────────┘
@@ -246,256 +279,108 @@ const stream = await fetch(`${META_BASE_URL}/chat/completions`, {
           │                   │                    │
           ▼                   ▼                    ▼
    ┌──────────────┐    ┌──────────────────────────────────┐
-   │  generate-   │    │        ZeroDB Cloud              │
-   │  embeddings  │───▶│  Vector DB + FREE Embeddings     │◀─┐
-   │  script      │    │  BAAI/bge-small-en-v1.5 (384D)   │  │
-   └──────────────┘    └──────────────────────────────────┘  │
-                                                               │
-                       ┌────────────────────────────────┐     │
-                       │      Meta Llama API            │     │
-                       │  Chat Completions (streaming)  │─────┘
-                       └────────────────────────────────┘
+   │  Embedding   │    │         ZeroDB Cloud             │
+   │  Generation  │───▶│  ✨ Auto-Embedding Platform ✨   │
+   │  Script      │    │  • Generates embeddings (FREE!)  │
+   │              │    │  • Stores vectors + metadata     │
+   │              │    │  • Semantic search API           │
+   └──────────────┘    │  • BAAI/bge-small-en-v1.5 (384D) │
+                       └───────────────┬──────────────────┘
+                                       │
+                       ┌───────────────▼──────────────────┐
+                       │      Meta Llama API              │
+                       │  Streaming Chat Completions      │
+                       │  OpenAI-Compatible Format        │
+                       └──────────────────────────────────┘
 ```
 
 ### Data Flow
 
-#### Build Time: Embedding Generation
+#### Build Time: Document Processing
 
 ```
-1. Script reads all .mdx files from pages/
+1. Read .mdx files from pages/ directory
    ↓
-2. Process and chunk documents into sections
+2. Parse and chunk into sections (by headings)
    ↓
-3. Calculate checksum for each file
+3. Calculate SHA-256 checksum per file
    ↓
-4. Check ZeroDB for existing checksums (skip unchanged)
+4. Check ZeroDB for existing checksums
    ↓
-5. ZeroDB Embed-and-Store API
-   - POST /v1/public/{project_id}/embeddings/embed-and-store
-   - Sends document text (ZeroDB generates embeddings FREE!)
-   - Stores: vector + text + metadata
-   - Namespace: "documentation"
-   Response time: ~500ms per batch (10 docs)
+5. Send to ZeroDB Embed-and-Store API
+   POST /v1/public/{project_id}/embeddings/embed-and-store
+   {
+     "texts": ["doc section 1", "doc section 2", ...],
+     "ids": ["doc1_section_0", "doc1_section_1", ...],
+     "metadatas": [{"path": "/docs/api", "heading": "API"}, ...],
+     "namespace": "documentation",
+     "model": "BAAI/bge-small-en-v1.5",
+     "upsert": true
+   }
+   ↓
+6. ZeroDB automatically:
+   ✅ Generates embeddings (FREE!)
+   ✅ Stores vectors in optimized index
+   ✅ Links metadata to each vector
+   ↓
+7. Done! Ready for search.
 ```
 
-#### Runtime: Search & Response
+**Response time:** ~500ms per batch (10 documents)
+
+#### Runtime: Search Flow
 
 ```
-1. User Query: "How do I configure the app?"
+1. User types query: "How do I configure the app?"
    ↓
-2. ZeroDB Authentication (JWT)
+2. Authenticate with ZeroDB (JWT)
    POST /v1/public/auth/login
-   Response time: ~0.8s
+   Response: {"access_token": "eyJ...", "expires_in": 1800}
+   Time: ~0.8s
    ↓
-3. ZeroDB Semantic Search
+3. Semantic search with auto-embedding
    POST /v1/public/{project_id}/embeddings/search
-   - Sends plain text query
-   - ZeroDB auto-generates embedding (FREE!)
-   - Searches 'documentation' namespace
-   - Returns top 5 similar documents with scores
-   Response time: ~1.2s
+   {
+     "query": "How do I configure the app?",  // Plain text!
+     "limit": 5,
+     "threshold": 0.7,
+     "namespace": "documentation",
+     "model": "BAAI/bge-small-en-v1.5"
+   }
    ↓
-4. Context Injection
-   - Build prompt with retrieved docs
-   - Add system instructions
-   Token count: ~1500 tokens
+   ZeroDB automatically:
+   ✅ Generates query embedding (FREE!)
+   ✅ Searches vector index
+   ✅ Returns top 5 results with scores
+   Time: ~1.2s
    ↓
-5. Meta Llama Streaming
-   POST {META_BASE_URL}/chat/completions
-   - Stream response to client
-   - Real-time SSE (Server-Sent Events)
-   Response time: ~2.5s
+4. Format results as context for LLM
+   Context: "Section 1...\n---\nSection 2...\n---\n..."
+   Tokens: ~1500 tokens
    ↓
-6. Display Streaming Answer
-   Total end-to-end: ~4.5s
-```
-
-### Tech Stack
-
-| Component | Technology | Why? |
-|-----------|-----------|------|
-| **Frontend** | Next.js 13 + React 18 | Modern, fast, SSR support, edge runtime |
-| **Styling** | Tailwind CSS | Utility-first, responsive design |
-| **UI Components** | Radix UI + cmdk | Accessible, keyboard-friendly search |
-| **API Routes** | Next.js Edge API | Serverless, auto-scaling, low latency |
-| **Vector Database** | ZeroDB Cloud | Managed vector DB, FREE embeddings |
-| **Semantic Search** | ZeroDB Embeddings API | Auto-embedding, 1-call search |
-| **Authentication** | ZeroDB JWT Auth | Secure token-based auth |
-| **Embeddings Model** | BAAI/bge-small-en-v1.5 | 384D, fast, accurate, FREE |
-| **LLM** | Meta Llama 4 Maverick | OpenAI-compatible, affordable |
-| **LLM API** | Meta Llama Compat API | Drop-in OpenAI replacement |
-| **HTTP Client** | node-fetch v2.7.0 | Reliable, configurable timeouts |
-| **Text Processing** | mdast + micromark | Parse and chunk MDX/markdown |
-| **Streaming** | Native Edge Response | Real-time SSE streaming |
-| **TypeScript** | TypeScript 4.9 | Type safety, better DX |
-| **Package Manager** | pnpm | Fast, efficient, saves disk space |
-
----
-
-## 📚 Code Examples
-
-### Semantic Search API (The Core)
-
-```typescript
-// pages/api/vector-search.ts (simplified)
-
-// Step 1: Authenticate with ZeroDB
-const authResponse = await fetch(`${ZERODB_API_URL}/v1/public/auth/login`, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-  body: `username=${ZERODB_EMAIL}&password=${ZERODB_PASSWORD}`
-});
-const { access_token } = await authResponse.json();
-
-// Step 2: Semantic search with auto-embedding
-const searchResponse = await fetch(
-  `${ZERODB_API_URL}/v1/public/${PROJECT_ID}/embeddings/search`,
-  {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${access_token}`
-    },
-    body: JSON.stringify({
-      query: userQuery,              // Plain text - ZeroDB handles embedding!
-      limit: 5,                      // Top 5 results
-      threshold: 0.7,                // Similarity threshold (0-1)
-      namespace: "documentation",    // Organize by namespace
-      model: "BAAI/bge-small-en-v1.5" // FREE embeddings
-    })
-  }
-);
-
-const { results } = await searchResponse.json();
-// results = [
-//   {
-//     id: "pages/docs/api_section_0",
-//     score: 0.89,
-//     text: "API documentation content...",
-//     metadata: { path: "/docs/api", heading: "API Reference" }
-//   },
-//   ...
-// ]
-```
-
-### Embedding Generation Script
-
-```typescript
-// lib/generate-embeddings.ts (simplified)
-
-import { processMdxForSearch } from './mdx-utils';
-
-// Discover all .mdx files
-const mdxFiles = await walk('pages')
-  .filter(({ path }) => /\.mdx?$/.test(path));
-
-console.log(`Found ${mdxFiles.length} documentation pages`);
-
-// Authenticate once
-const { access_token } = await authenticateZeroDB();
-
-// Process each file
-for (const file of mdxFiles) {
-  const content = await readFile(file.path, 'utf8');
-
-  // Extract sections and metadata
-  const { sections, checksum, meta } = processMdxForSearch(content);
-
-  // Check if file changed (skip if unchanged)
-  const existingChecksum = await getChecksum(file.path);
-  if (existingChecksum === checksum) {
-    console.log(`Skipping ${file.path} (unchanged)`);
-    continue;
-  }
-
-  // Convert to ZeroDB documents
-  const documents = sections.map((section, i) => ({
-    id: `${file.path}_section_${i}`,
-    text: section.content.replace(/\n/g, ' ').trim(),
-    metadata: {
-      path: file.path,
-      heading: section.heading,
-      slug: section.slug,
-      checksum,
-      section_index: i
-    }
-  }));
-
-  // Batch embed and store (ZeroDB handles embedding generation!)
-  await fetch(
-    `${ZERODB_API_URL}/v1/public/${PROJECT_ID}/embeddings/embed-and-store`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${access_token}`
-      },
-      body: JSON.stringify({
-        documents,
-        namespace: 'documentation',
-        model: 'BAAI/bge-small-en-v1.5',
-        upsert: true  // Update if exists
-      })
-    }
-  );
-
-  console.log(`✓ Embedded ${documents.length} sections from ${file.path}`);
-}
-```
-
-### Search Dialog Component
-
-```typescript
-// components/SearchDialog.tsx (simplified)
-
-export function SearchDialog() {
-  const [query, setQuery] = useState('');
-  const [answer, setAnswer] = useState('');
-
-  const handleSearch = async () => {
-    setAnswer('');
-
-    // Call vector search API
-    const response = await fetch('/api/vector-search', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt: query })
-    });
-
-    // Stream response
-    const reader = response.body?.getReader();
-    const decoder = new TextDecoder();
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-
-      const chunk = decoder.decode(value);
-      setAnswer(prev => prev + chunk);
-    }
-  };
-
-  return (
-    <Dialog>
-      <Input
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="Ask anything about the docs..."
-      />
-      <Button onClick={handleSearch}>Search</Button>
-      <div className="prose">{answer}</div>
-    </Dialog>
-  );
-}
+5. Stream answer from Meta Llama
+   POST https://api.llama.com/compat/v1/chat/completions
+   {
+     "model": "Llama-4-Maverick-17B-128E-Instruct-FP8",
+     "messages": [{
+       "role": "user",
+       "content": "Context: ...\n\nQuestion: ..."
+     }],
+     "stream": true
+   }
+   Time: ~2.5s
+   ↓
+6. Display streaming answer in UI
+   Total: ~4.5s end-to-end
 ```
 
 ---
 
-## 🎨 Customization Guide
+## 🎨 Customization
 
 ### Add Your Own Documentation
 
-1. **Create `.mdx` files in `pages/` directory:**
+1. **Create `.mdx` files in `pages/docs/`:**
 
 ```markdown
 <!-- pages/docs/getting-started.mdx -->
@@ -514,12 +399,14 @@ Your documentation content here...
 Step-by-step instructions...
 ```
 
-2. **Run embedding generation:**
+2. **Regenerate embeddings:**
+
 ```bash
 pnpm run embeddings
 ```
 
 3. **Restart dev server:**
+
 ```bash
 pnpm dev
 ```
@@ -540,19 +427,28 @@ const searchResponse = await fetch(/* ... */, {
 });
 ```
 
-### Change LLM Model
+### Use Multiple Namespaces
 
-Update `.env`:
+Organize docs by category:
 
-```env
-# Faster, more affordable (recommended)
-META_MODEL=Llama-4-Maverick-17B-128E-Instruct-FP8
+```typescript
+// API docs in "api-reference" namespace
+await embedAndStore({
+  documents: apiDocs,
+  namespace: "api-reference"
+});
 
-# More powerful
-META_MODEL=Llama3.3-70B-Instruct
+// Guides in "tutorials" namespace
+await embedAndStore({
+  documents: guides,
+  namespace: "tutorials"
+});
 
-# Most capable
-META_MODEL=Llama3.1-405B-Instruct
+// Search specific namespace
+await search({
+  query: "authentication",
+  namespace: "api-reference"  // Only search API docs
+});
 ```
 
 ### Customize System Prompt
@@ -561,81 +457,27 @@ Edit `pages/api/vector-search.ts` around line 369:
 
 ```typescript
 const prompt = codeBlock`
-  ${oneLine`
-    You are an AI assistant for [YOUR COMPANY] documentation.
+  You are an expert assistant for [YOUR COMPANY] documentation.
 
-    You specialize in:
-    - [Your product/service]
-    - [Your domain expertise]
-
-    Always be [friendly/professional/technical/etc.]
-
-    Given the following documentation sections, answer the question
-    using only that information. If unsure, say "I don't know."
-  `}
+  Focus on:
+  - Clear, actionable answers
+  - Code examples when relevant
+  - Links to relevant docs
 
   Context sections:
   ${contextText}
 
-  Question: """
-  ${sanitizedQuery}
-  """
+  Question: ${sanitizedQuery}
 
-  Answer as markdown:
+  Answer as markdown with code blocks:
 `
-```
-
-### Use Different Namespaces
-
-Organize documents by category:
-
-```typescript
-// Generate embeddings with different namespaces
-await fetch(/* ... embed-and-store */, {
-  body: JSON.stringify({
-    documents: apiDocs,
-    namespace: "api-reference",  // API docs
-    // ...
-  })
-});
-
-await fetch(/* ... embed-and-store */, {
-  body: JSON.stringify({
-    documents: guides,
-    namespace: "guides",  // Tutorial guides
-    // ...
-  })
-});
-
-// Search specific namespace
-await fetch(/* ... search */, {
-  body: JSON.stringify({
-    query: "API authentication",
-    namespace: "api-reference",  // Search only API docs
-    // ...
-  })
-});
 ```
 
 ---
 
 ## 🚀 Deployment
 
-### Prerequisites
-
-Before deploying, generate your embeddings locally:
-
-```bash
-pnpm run embeddings
-```
-
-**Important:** After first deployment, remove `pnpm run embeddings &&` from the `build` script in `package.json` to avoid re-generating embeddings on every deploy.
-
-### Deployment Options
-
-This Next.js application can be deployed to any platform that supports Node.js:
-
-#### Option 1: Deploy to Railway (Recommended)
+### Quick Deploy to Railway
 
 ```bash
 # Install Railway CLI
@@ -646,67 +488,107 @@ railway login
 railway init
 railway up
 
-# Add environment variables
-railway variables set META_API_KEY=...
-railway variables set ZERODB_PROJECT_ID=...
-# ... (add all environment variables)
+# Set environment variables
+railway variables set ZERODB_API_URL=https://api.ainative.studio
+railway variables set ZERODB_PROJECT_ID=your-project-id
+railway variables set ZERODB_EMAIL=your-email
+railway variables set ZERODB_PASSWORD=your-password
+railway variables set META_API_KEY=your-meta-key
+railway variables set META_BASE_URL=https://api.llama.com/compat/v1
+railway variables set META_MODEL=Llama-4-Maverick-17B-128E-Instruct-FP8
 ```
 
-#### Option 2: Deploy to Netlify
+### Deploy to Netlify
 
 ```bash
 # Install Netlify CLI
 npm i -g netlify-cli
 
-# Build first
+# Build
 pnpm build
 
 # Deploy
 netlify deploy --prod
 
-# Set environment variables in Netlify dashboard
-# Site Settings → Environment Variables
+# Set environment variables in Netlify dashboard:
+# Site Settings → Environment Variables → Add all ZERODB_* and META_* vars
 ```
 
-#### Option 3: Deploy to Any Node.js Platform
+### Works With
 
-This application is standard Next.js and can be deployed to:
-- Railway
+- Railway (recommended)
 - Netlify
-- AWS (EC2, ECS, Lambda)
-- Google Cloud (App Engine, Cloud Run)
-- Azure (App Service, Container Instances)
+- Vercel
+- AWS (Lambda, ECS, EC2)
+- Google Cloud (Cloud Run, App Engine)
+- Azure (App Service)
 - DigitalOcean App Platform
-- Heroku
 - Fly.io
 - Render
-- Any VPS with Node.js support
+- Any Node.js hosting
 
-### Environment Variables Checklist
+---
 
-Before deploying, ensure these are set:
+## 🧪 Testing
 
-- ✅ `META_API_KEY` - Meta Llama API key
-- ✅ `META_BASE_URL` - `https://api.llama.com/compat/v1`
-- ✅ `META_MODEL` - `Llama-4-Maverick-17B-128E-Instruct-FP8`
-- ✅ `ZERODB_API_URL` - `https://api.ainative.studio`
-- ✅ `ZERODB_PROJECT_ID` - Your project ID from AINative dashboard
-- ✅ `ZERODB_EMAIL` - Your AINative account email
-- ✅ `ZERODB_PASSWORD` - Your AINative account password
+### Run Tests
+
+```bash
+# Unit tests
+pnpm test
+
+# Integration tests
+pnpm test:integration
+
+# Coverage report
+pnpm test:coverage
+```
+
+### Manual Testing
+
+Try these queries to test semantic search:
+
+```
+✅ "How do I deploy to production?"
+✅ "What are the environment variables?"
+✅ "Show me code examples for search"
+✅ "Explain the vector database setup"
+✅ "How does authentication work?"
+```
+
+---
+
+## 📖 Learn More About ZeroDB
+
+### Official Documentation
+
+- **[ZeroDB Platform Docs](https://docs.ainative.studio)** - Complete API reference
+- **[Vector Database Guide](https://docs.ainative.studio/features/vector-database)** - Deep dive into embeddings
+- **[Authentication Guide](https://docs.ainative.studio/api/auth)** - Security best practices
+- **[Pricing](https://ainative.studio/pricing)** - Free tier + pay-as-you-grow
+
+### Tutorials
+
+- **[Building RAG Systems](https://docs.ainative.studio/tutorials/rag)** - Complete RAG guide
+- **[Semantic Search Best Practices](https://docs.ainative.studio/tutorials/semantic-search)** - Optimize search
+- **[Production Deployment](https://docs.ainative.studio/tutorials/deployment)** - Scale to production
+
+### Example Projects
+
+- **[Doc Search](https://github.com/AINative-Studio/nextjs-openai-doc-search)** - This repo (you are here!)
+- **[Customer Support Bot](https://github.com/AINative-Studio/zerodb-support-bot)** - AI support chatbot
+- **[Semantic Code Search](https://github.com/AINative-Studio/zerodb-code-search)** - Search code repos
 
 ---
 
 ## 🔧 Troubleshooting
 
-### Common Issues
+### "Failed to authenticate with ZeroDB"
 
-#### "Failed to authenticate with ZeroDB"
+**Solution:** Verify your credentials
 
-**Cause:** Incorrect credentials or network issue
-
-**Solution:**
 ```bash
-# Verify credentials with curl
+# Test authentication
 curl -X POST https://api.ainative.studio/v1/public/auth/login \
   -H "Content-Type: application/x-www-form-urlencoded" \
   -d "username=YOUR_EMAIL&password=YOUR_PASSWORD"
@@ -714,161 +596,98 @@ curl -X POST https://api.ainative.studio/v1/public/auth/login \
 # Should return: {"access_token":"eyJ...","token_type":"bearer"}
 ```
 
-#### "No search results returned"
+### "No search results returned"
 
-**Cause:** Embeddings not generated or wrong namespace
+**Solution:** Regenerate embeddings
 
-**Solution:**
 ```bash
-# Regenerate embeddings
-pnpm run embeddings
-
-# Or force refresh
+# Force refresh embeddings
 pnpm run embeddings:refresh
+
+# Or regenerate from scratch
+rm -rf pages/docs/.cache
+pnpm run embeddings
 ```
 
-**Verify embeddings exist:**
+**Verify:** Check [ainative.studio/dashboard](https://ainative.studio/dashboard) → Your Project → Vector Database → should show document count
+
+### "Module not found" errors
+
+**Solution:** Clean install
+
 ```bash
-# Check ZeroDB dashboard at https://ainative.studio/dashboard
-# Navigate to your project → Vector Database → should see document count
-```
-
-#### "Meta Llama timeout error"
-
-**Cause:** Network issues or API overload
-
-**Solution:**
-- Check Meta Llama API status page
-- Verify `META_API_KEY` is valid
-- Try a different model in `.env`:
-  ```env
-  META_MODEL=Llama-4-Maverick-17B-128E-Instruct-FP8  # Fastest
-  ```
-
-#### "Module not found" or import errors
-
-**Cause:** Dependencies not installed
-
-**Solution:**
-```bash
-# Clean install
 rm -rf node_modules pnpm-lock.yaml
 pnpm install
 ```
 
-#### Embeddings generation fails
-
-**Cause:** Missing environment variables or file permissions
-
-**Solution:**
-```bash
-# Check environment variables
-cat .env
-
-# Verify all required vars are set:
-# - ZERODB_API_URL
-# - ZERODB_PROJECT_ID
-# - ZERODB_EMAIL
-# - ZERODB_PASSWORD
-
-# Check file permissions
-ls -la pages/
-```
-
-### Performance Issues
-
-#### Search is slow (>5s)
-
-**Possible causes:**
-- Network latency
-- Too many results (adjust `limit`)
-- Large documents (optimize chunking)
+### Search is slow (>5s)
 
 **Solutions:**
+
+1. Reduce result count:
 ```typescript
-// Reduce result count
 body: JSON.stringify({
-  query: userQuery,
   limit: 3,  // Down from 5
-  threshold: 0.75,  // More selective
-  // ...
+  threshold: 0.75  // More selective
 })
 ```
 
-#### Embeddings generation takes too long
-
-**Solution:**
-```typescript
-// Increase batch size in lib/generate-embeddings.ts
-const BATCH_SIZE = 20;  // Up from 10
+2. Use faster LLM model:
+```env
+META_MODEL=Llama-4-Maverick-17B-128E-Instruct-FP8  # Fastest
 ```
 
-### Get Help
+---
 
-- 📖 **Documentation:** [ZERODB_INTEGRATION.md](./ZERODB_INTEGRATION.md)
-- 📖 **Migration Guide:** [MIGRATION_SUMMARY.md](./MIGRATION_SUMMARY.md)
-- 🐛 **Issues:** [GitHub Issues](https://github.com/AINative-Studio/nextjs-openai-doc-search/issues)
-- 💬 **Discord:** [Join our community](https://discord.gg/ainative)
-- 📧 **Email:** support@ainative.studio
+## 💰 Cost Breakdown
+
+### Traditional Stack
+
+| Service | Monthly Cost | Notes |
+|---------|-------------|-------|
+| OpenAI Embeddings | $20 | 1M tokens/month |
+| Supabase pgvector | $25 | Starter plan |
+| OpenAI GPT-4 | $50 | 100k tokens/month |
+| **Total** | **$95** | Plus engineering time |
+
+### ZeroDB Stack
+
+| Service | Monthly Cost | Notes |
+|---------|-------------|-------|
+| ZeroDB Platform | $0-15 | FREE tier, then $15/month |
+| **Embeddings** | **$0** | **FREE with ZeroDB!** |
+| Meta Llama | $20 | 100k tokens/month |
+| **Total** | **$20-35** | **63-73% savings** |
+
+**Save $60-75/month per project.** For 5 projects, that's **$3,600-4,500/year** in savings!
 
 ---
 
-## 📖 Learn More
+## 🌟 Why Choose ZeroDB?
 
-### Documentation
+### For Developers
 
-- [ZERODB_INTEGRATION.md](./ZERODB_INTEGRATION.md) - Complete ZeroDB integration guide
-- [MIGRATION_SUMMARY.md](./MIGRATION_SUMMARY.md) - Migration from OpenAI/Supabase
-- [ZeroDB Developer Guide](https://docs.ainative.studio) - Official API documentation
-- [Meta Llama Docs](https://llama.developer.meta.com/docs) - LLM documentation
+✅ **5-minute setup** - Not 5 hours
+✅ **One API call** - Not three
+✅ **FREE embeddings** - Save money
+✅ **Pure REST** - No complex SDKs
+✅ **89% test coverage** - Production ready
+✅ **TypeScript support** - Full type safety
 
-### API Reference
+### For Businesses
 
-- [ZeroDB REST API](https://api.ainative.studio/docs) - Interactive API playground
-- [Embeddings API](https://docs.ainative.studio/api/embeddings) - Detailed embeddings guide
-- [Authentication](https://docs.ainative.studio/api/auth) - Auth methods and security
-
-### Tutorials
-
-- [Building RAG Systems with ZeroDB](https://docs.ainative.studio/tutorials/rag)
-- [Optimizing Semantic Search](https://docs.ainative.studio/tutorials/semantic-search)
-- [Production Deployment Best Practices](https://docs.ainative.studio/tutorials/deployment)
-
----
-
-## 🌟 Why This Stack?
-
-### Cost Comparison (Monthly)
-
-| Solution | Embeddings | Vector DB | LLM | Total |
-|----------|-----------|-----------|-----|-------|
-| **OpenAI + Supabase** | $20 | $25 | $50 | **$95** |
-| **OpenAI + Pinecone** | $20 | $70 | $50 | **$140** |
-| **ZeroDB + Meta Llama** | FREE | $0-15 | $20 | **$20-35** |
-
-**Save $60-120/month (63-86% cost reduction)** with ZeroDB! 💰
-
-*Estimates based on 1M tokens/month embedding, 10k queries/month, typical doc search usage.*
-
-### Developer Experience
-
-| Feature | Traditional Stack | ZeroDB Stack |
-|---------|------------------|--------------|
-| **Setup Time** | 2-4 hours | 5 minutes |
-| **API Keys** | 3 | 2 |
-| **Services** | 3 | 2 |
-| **Embedding Calls** | Manual (2-step) | Automatic (1-call) |
-| **SDK Complexity** | High | Low (or no SDK) |
-| **Onboarding Docs** | Scattered | Unified |
-| **Local Development** | Complex | Simple |
-
-**10x better developer experience** with ZeroDB! 🚀
+✅ **63-86% cost savings** - Better margins
+✅ **Faster time to market** - 5 minutes vs 5 hours
+✅ **Less vendor lock-in** - Standard REST API
+✅ **Predictable pricing** - No surprise bills
+✅ **Built for scale** - From prototype to production
+✅ **Support included** - We're here to help
 
 ---
 
 ## 🤝 Contributing
 
-We welcome contributions! Here's how:
+We welcome contributions!
 
 1. Fork the repo
 2. Create feature branch: `git checkout -b feature/amazing-feature`
@@ -884,20 +703,27 @@ Apache 2.0 License - see [LICENSE](./LICENSE)
 
 ---
 
-## 🎉 What's Next?
+## 🎯 What's Next?
 
-Now that you have a working AI documentation search, explore:
+### Explore Advanced Features
 
-- 🔍 **Advanced Search** - Filter by metadata, multi-namespace search
-- 🧠 **Conversation Memory** - Maintain context across queries
-- 📊 **Analytics** - Track popular queries and user engagement
-- 🔐 **User Authentication** - Add login and personalized search
-- 🌍 **Multi-Language** - Support multiple languages
-- 🎨 **Custom UI** - Build your own search interface
-- 📱 **Mobile-Friendly** - Optimize for mobile devices
-- 🔄 **Auto-Sync** - Watch for file changes and auto-update embeddings
-- 🎯 **Source Attribution** - Show which docs were used in answers
-- 💬 **Feedback System** - Collect user feedback on answer quality
+- 🔍 **Multi-namespace search** - Organize docs by category
+- 🧠 **Conversation memory** - Context across queries
+- 📊 **Analytics** - Track search patterns
+- 🔐 **User auth** - Personalized search
+- 🌍 **Multi-language** - i18n support
+- 🎨 **Custom UI** - Build your own interface
+- 📱 **Mobile optimization** - Perfect on any device
+- 🔄 **Auto-sync** - Watch for changes
+- 🎯 **Source attribution** - Show doc sources
+- 💬 **Feedback system** - Improve answers
+
+### Join the Community
+
+- 💬 **[Discord](https://discord.gg/ainative)** - Chat with developers
+- 🐦 **[Twitter](https://twitter.com/ainativestudio)** - Stay updated
+- 📧 **[Email](mailto:support@ainative.studio)** - Get support
+- 🌐 **[Website](https://ainative.studio)** - Explore more
 
 ---
 
@@ -905,15 +731,17 @@ Now that you have a working AI documentation search, explore:
 
 If ZeroDB helped you build something awesome:
 
-- ⭐ Star this repo
-- 🐦 Tweet about it [@AINativeStudio](https://twitter.com/ainativestudio)
-- 📝 Write a blog post
-- 💬 Share in your community
-
-**Thank you for building with ZeroDB!** 🚀
+- ⭐ **Star this repo**
+- 🐦 **Tweet about it** [@AINativeStudio](https://twitter.com/ainativestudio)
+- 📝 **Write a blog post**
+- 💬 **Share in your community**
 
 ---
 
-**Built with love by the AINative team**
+<div align="center">
+
+**Built with ❤️ by the [AINative team](https://ainative.studio)**
 
 [Website](https://ainative.studio) • [Docs](https://docs.ainative.studio) • [Discord](https://discord.gg/ainative) • [Twitter](https://twitter.com/ainativestudio) • [GitHub](https://github.com/AINative-Studio)
+
+</div>
