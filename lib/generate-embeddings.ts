@@ -1,6 +1,5 @@
-import { createClient } from '@supabase/supabase-js'
 import { createHash } from 'crypto'
-import dotenv from 'dotenv'
+import * as dotenv from 'dotenv'
 import { ObjectExpression } from 'estree'
 import { readdir, readFile, stat } from 'fs/promises'
 import GithubSlugger from 'github-slugger'
@@ -10,17 +9,243 @@ import { mdxFromMarkdown, MdxjsEsm } from 'mdast-util-mdx'
 import { toMarkdown } from 'mdast-util-to-markdown'
 import { toString } from 'mdast-util-to-string'
 import { mdxjs } from 'micromark-extension-mdxjs'
-import 'openai'
-import { Configuration, OpenAIApi } from 'openai'
+import nodeFetch from 'node-fetch'
 import { basename, dirname, join } from 'path'
 import { u } from 'unist-builder'
 import { filter } from 'unist-util-filter'
-import { inspect } from 'util'
-import yargs from 'yargs'
+import * as yargs from 'yargs'
 
 dotenv.config()
 
 const ignoredFiles = ['pages/404.mdx']
+
+// ZeroDB Configuration
+const ZERODB_API_URL = process.env.ZERODB_API_URL!
+const ZERODB_PROJECT_ID = process.env.ZERODB_PROJECT_ID!
+const ZERODB_EMAIL = process.env.ZERODB_EMAIL!
+const ZERODB_PASSWORD = process.env.ZERODB_PASSWORD!
+const ZERODB_NAMESPACE = 'documentation'
+const ZERODB_MODEL = 'BAAI/bge-small-en-v1.5'
+const BATCH_SIZE = 10
+const MAX_RETRIES = 3
+const RETRY_DELAY_MS = 1000
+
+/**
+ * Retry configuration for ZeroDB API calls
+ */
+async function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+/**
+ * Retry wrapper for async functions with exponential backoff
+ */
+async function withRetry<T>(
+  fn: () => Promise<T>,
+  retries: number = MAX_RETRIES,
+  delayMs: number = RETRY_DELAY_MS
+): Promise<T> {
+  let lastError: Error | undefined
+
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      return await fn()
+    } catch (error) {
+      lastError = error as Error
+
+      if (attempt < retries) {
+        const backoffDelay = delayMs * Math.pow(2, attempt)
+        console.log(`Retry attempt ${attempt + 1}/${retries} after ${backoffDelay}ms...`)
+        await sleep(backoffDelay)
+      }
+    }
+  }
+
+  throw lastError || new Error('Operation failed after retries')
+}
+
+/**
+ * Authenticate with ZeroDB and return access token
+ */
+async function authenticateZeroDB(): Promise<string> {
+  console.log('Authenticating with ZeroDB...')
+
+  const authResponse = await withRetry(async () => {
+    const response = await nodeFetch(`${ZERODB_API_URL}/v1/public/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `username=${encodeURIComponent(ZERODB_EMAIL)}&password=${encodeURIComponent(
+        ZERODB_PASSWORD
+      )}`,
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`ZeroDB authentication failed: ${response.status} ${errorText}`)
+    }
+
+    return response
+  })
+
+  const authData = (await authResponse.json()) as { access_token: string }
+
+  if (!authData.access_token) {
+    throw new Error('ZeroDB authentication failed: No access token received')
+  }
+
+  console.log('Successfully authenticated with ZeroDB')
+  return authData.access_token
+}
+
+/**
+ * Fetch existing checksums from ZeroDB to avoid re-processing unchanged documents
+ */
+async function fetchExistingChecksums(accessToken: string): Promise<Map<string, string>> {
+  console.log('Fetching existing document checksums from ZeroDB...')
+
+  const checksumMap = new Map<string, string>()
+
+  try {
+    const response = await withRetry(async () => {
+      const res = await nodeFetch(
+        `${ZERODB_API_URL}/v1/public/${ZERODB_PROJECT_ID}/embeddings/search`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({
+            namespace: ZERODB_NAMESPACE,
+            query: '',
+            limit: 10000, // Fetch all documents
+            include_metadata: true,
+          }),
+        }
+      )
+
+      if (!res.ok) {
+        // If no documents exist yet, return empty map
+        if (res.status === 404) {
+          return null
+        }
+        const errorText = await res.text()
+        throw new Error(`Failed to fetch checksums: ${res.status} ${errorText}`)
+      }
+
+      return res
+    })
+
+    if (!response) {
+      console.log('No existing documents found in ZeroDB')
+      return checksumMap
+    }
+
+    const data = (await response.json()) as {
+      results?: Array<{ metadata?: { checksum?: string; path?: string } }>
+    }
+
+    if (data.results && Array.isArray(data.results)) {
+      for (const result of data.results) {
+        if (result.metadata?.path && result.metadata?.checksum) {
+          checksumMap.set(result.metadata.path, result.metadata.checksum)
+        }
+      }
+    }
+
+    console.log(`Found ${checksumMap.size} existing documents in ZeroDB`)
+  } catch (error) {
+    console.warn('Warning: Could not fetch existing checksums, will process all documents')
+    console.warn(error)
+  }
+
+  return checksumMap
+}
+
+/**
+ * Delete old sections for a document in ZeroDB by path
+ */
+async function deleteOldSections(
+  accessToken: string,
+  path: string
+): Promise<void> {
+  console.log(`Deleting old sections for ${path}...`)
+
+  try {
+    await withRetry(async () => {
+      const response = await nodeFetch(
+        `${ZERODB_API_URL}/v1/public/${ZERODB_PROJECT_ID}/embeddings/delete`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({
+            namespace: ZERODB_NAMESPACE,
+            filter: {
+              path: path,
+            },
+          }),
+        }
+      )
+
+      if (!response.ok && response.status !== 404) {
+        const errorText = await response.text()
+        throw new Error(`Failed to delete old sections: ${response.status} ${errorText}`)
+      }
+    })
+  } catch (error) {
+    console.warn(`Warning: Could not delete old sections for ${path}`)
+    console.warn(error)
+  }
+}
+
+/**
+ * Embed and store documents in ZeroDB using the auto-embedding API
+ */
+async function embedAndStoreDocuments(
+  accessToken: string,
+  documents: Array<{
+    id: string
+    text: string
+    metadata: Record<string, any>
+  }>
+): Promise<void> {
+  const response = await withRetry(async () => {
+    const res = await nodeFetch(
+      `${ZERODB_API_URL}/v1/public/${ZERODB_PROJECT_ID}/embeddings/embed-and-store`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          documents: documents,
+          namespace: ZERODB_NAMESPACE,
+          model: ZERODB_MODEL,
+          upsert: true,
+        }),
+      }
+    )
+
+    if (!res.ok) {
+      const errorText = await res.text()
+      throw new Error(`ZeroDB embed-and-store failed: ${res.status} ${errorText}`)
+    }
+
+    return res
+  })
+
+  const result = (await response.json()) as { embedded_count?: number }
+
+  if (result.embedded_count !== documents.length) {
+    console.warn(
+      `Warning: Expected to embed ${documents.length} documents, but embedded ${result.embedded_count}`
+    )
+  }
+}
 
 /**
  * Extracts ES literals from an `estree` `ObjectExpression`
@@ -264,36 +489,36 @@ class MarkdownEmbeddingSource extends BaseEmbeddingSource {
 
 type EmbeddingSource = MarkdownEmbeddingSource
 
+/**
+ * Main function to generate embeddings using ZeroDB
+ */
 async function generateEmbeddings() {
   const argv = await yargs.option('refresh', {
     alias: 'r',
-    description: 'Refresh data',
+    description: 'Refresh all embeddings (ignore checksums)',
     type: 'boolean',
   }).argv
 
   const shouldRefresh = argv.refresh
 
-  if (
-    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
-    !process.env.SUPABASE_SERVICE_ROLE_KEY ||
-    !process.env.OPENAI_KEY
-  ) {
+  // Validate environment variables
+  if (!ZERODB_API_URL || !ZERODB_PROJECT_ID || !ZERODB_EMAIL || !ZERODB_PASSWORD) {
     return console.log(
-      'Environment variables NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, and OPENAI_KEY are required: skipping embeddings generation'
+      'Environment variables ZERODB_API_URL, ZERODB_PROJECT_ID, ZERODB_EMAIL, and ZERODB_PASSWORD are required: skipping embeddings generation'
     )
   }
 
-  const supabaseClient = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY,
-    {
-      auth: {
-        persistSession: false,
-        autoRefreshToken: false,
-      },
-    }
-  )
+  console.log('Starting ZeroDB embeddings generation...')
+  console.log(`ZeroDB API URL: ${ZERODB_API_URL}`)
+  console.log(`ZeroDB Project ID: ${ZERODB_PROJECT_ID}`)
+  console.log(`Namespace: ${ZERODB_NAMESPACE}`)
+  console.log(`Model: ${ZERODB_MODEL}`)
+  console.log(`Batch Size: ${BATCH_SIZE}`)
 
+  // Authenticate with ZeroDB
+  const accessToken = await authenticateZeroDB()
+
+  // Discover all MDX files
   const embeddingSources: EmbeddingSource[] = [
     ...(await walk('pages'))
       .filter(({ path }) => /\.mdx?$/.test(path))
@@ -303,191 +528,108 @@ async function generateEmbeddings() {
 
   console.log(`Discovered ${embeddingSources.length} pages`)
 
+  // Fetch existing checksums (unless refresh is forced)
+  let existingChecksums = new Map<string, string>()
   if (!shouldRefresh) {
     console.log('Checking which pages are new or have changed')
+    existingChecksums = await fetchExistingChecksums(accessToken)
   } else {
     console.log('Refresh flag set, re-generating all pages')
   }
 
+  // Process each source and collect documents for batching
+  let documentsToEmbed: Array<{
+    id: string
+    text: string
+    metadata: Record<string, any>
+  }> = []
+  let processedCount = 0
+  let skippedCount = 0
+  let updatedCount = 0
+
   for (const embeddingSource of embeddingSources) {
-    const { type, source, path, parentPath } = embeddingSource
+    const { source, path } = embeddingSource
 
     try {
       const { checksum, meta, sections } = await embeddingSource.load()
 
-      // Check for existing page in DB and compare checksums
-      const { error: fetchPageError, data: existingPage } = await supabaseClient
-        .from('nods_page')
-        .select('id, path, checksum, parentPage:parent_page_id(id, path)')
-        .filter('path', 'eq', path)
-        .limit(1)
-        .maybeSingle()
-
-      if (fetchPageError) {
-        throw fetchPageError
-      }
-
-      type Singular<T> = T extends any[] ? undefined : T
-
-      // We use checksum to determine if this page & its sections need to be regenerated
-      if (!shouldRefresh && existingPage?.checksum === checksum) {
-        const existingParentPage = existingPage?.parentPage as Singular<
-          typeof existingPage.parentPage
-        >
-
-        // If parent page changed, update it
-        if (existingParentPage?.path !== parentPath) {
-          console.log(`[${path}] Parent page has changed. Updating to '${parentPath}'...`)
-          const { error: fetchParentPageError, data: parentPage } = await supabaseClient
-            .from('nods_page')
-            .select()
-            .filter('path', 'eq', parentPath)
-            .limit(1)
-            .maybeSingle()
-
-          if (fetchParentPageError) {
-            throw fetchParentPageError
-          }
-
-          const { error: updatePageError } = await supabaseClient
-            .from('nods_page')
-            .update({ parent_page_id: parentPage?.id })
-            .filter('id', 'eq', existingPage.id)
-
-          if (updatePageError) {
-            throw updatePageError
-          }
-        }
+      // Check if document has changed
+      const existingChecksum = existingChecksums.get(path)
+      if (!shouldRefresh && existingChecksum === checksum) {
+        console.log(`[${path}] Unchanged (checksum match), skipping`)
+        skippedCount++
         continue
       }
 
-      if (existingPage) {
-        if (!shouldRefresh) {
-          console.log(
-            `[${path}] Docs have changed, removing old page sections and their embeddings`
-          )
-        } else {
-          console.log(`[${path}] Refresh flag set, removing old page sections and their embeddings`)
-        }
-
-        const { error: deletePageSectionError } = await supabaseClient
-          .from('nods_page_section')
-          .delete()
-          .filter('page_id', 'eq', existingPage.id)
-
-        if (deletePageSectionError) {
-          throw deletePageSectionError
-        }
+      if (existingChecksum && existingChecksum !== checksum) {
+        console.log(`[${path}] Document changed, deleting old sections`)
+        await deleteOldSections(accessToken, path)
+        updatedCount++
+      } else {
+        console.log(`[${path}] New document, processing ${sections.length} sections`)
       }
 
-      const { error: fetchParentPageError, data: parentPage } = await supabaseClient
-        .from('nods_page')
-        .select()
-        .filter('path', 'eq', parentPath)
-        .limit(1)
-        .maybeSingle()
+      // Convert sections to ZeroDB documents
+      for (let i = 0; i < sections.length; i++) {
+        const section = sections[i]
+        // Replace newlines with spaces for better embedding quality
+        const text = section.content.replace(/\n/g, ' ').trim()
 
-      if (fetchParentPageError) {
-        throw fetchParentPageError
-      }
+        if (!text) {
+          continue
+        }
 
-      // Create/update page record. Intentionally clear checksum until we
-      // have successfully generated all page sections.
-      const { error: upsertPageError, data: page } = await supabaseClient
-        .from('nods_page')
-        .upsert(
-          {
-            checksum: null,
-            path,
-            type,
-            source,
-            meta,
-            parent_page_id: parentPage?.id,
+        documentsToEmbed.push({
+          id: `${path}_section_${i}`,
+          text: text,
+          metadata: {
+            path: path,
+            source: source,
+            heading: section.heading || null,
+            slug: section.slug || null,
+            checksum: checksum,
+            meta: meta || null,
+            section_index: i,
           },
-          { onConflict: 'path' }
-        )
-        .select()
-        .limit(1)
-        .single()
-
-      if (upsertPageError) {
-        throw upsertPageError
+        })
       }
 
-      console.log(`[${path}] Adding ${sections.length} page sections (with embeddings)`)
-      for (const { slug, heading, content } of sections) {
-        // OpenAI recommends replacing newlines with spaces for best results (specific to embeddings)
-        const input = content.replace(/\n/g, ' ')
+      processedCount++
 
-        try {
-          const configuration = new Configuration({
-            apiKey: process.env.OPENAI_KEY,
-          })
-          const openai = new OpenAIApi(configuration)
-
-          const embeddingResponse = await openai.createEmbedding({
-            model: 'text-embedding-ada-002',
-            input,
-          })
-
-          if (embeddingResponse.status !== 200) {
-            throw new Error(inspect(embeddingResponse.data, false, 2))
-          }
-
-          const [responseData] = embeddingResponse.data.data
-
-          const { error: insertPageSectionError, data: pageSection } = await supabaseClient
-            .from('nods_page_section')
-            .insert({
-              page_id: page.id,
-              slug,
-              heading,
-              content,
-              token_count: embeddingResponse.data.usage.total_tokens,
-              embedding: responseData.embedding,
-            })
-            .select()
-            .limit(1)
-            .single()
-
-          if (insertPageSectionError) {
-            throw insertPageSectionError
-          }
-        } catch (err) {
-          // TODO: decide how to better handle failed embeddings
-          console.error(
-            `Failed to generate embeddings for '${path}' page section starting with '${input.slice(
-              0,
-              40
-            )}...'`
-          )
-
-          throw err
-        }
+      // Batch embed when we reach BATCH_SIZE
+      if (documentsToEmbed.length >= BATCH_SIZE) {
+        const batch = documentsToEmbed.splice(0, BATCH_SIZE)
+        console.log(`Embedding and storing batch of ${batch.length} documents...`)
+        await embedAndStoreDocuments(accessToken, batch)
       }
-
-      // Set page checksum so that we know this page was stored successfully
-      const { error: updatePageError } = await supabaseClient
-        .from('nods_page')
-        .update({ checksum })
-        .filter('id', 'eq', page.id)
-
-      if (updatePageError) {
-        throw updatePageError
-      }
-    } catch (err) {
+    } catch (error) {
+      console.error(`Error processing ${path}:`, error)
       console.error(
-        `Page '${path}' or one/multiple of its page sections failed to store properly. Page has been marked with null checksum to indicate that it needs to be re-generated.`
+        `Page '${path}' failed to process. It may need to be re-generated on next run.`
       )
-      console.error(err)
     }
   }
 
-  console.log('Embedding generation complete')
+  // Embed remaining documents
+  if (documentsToEmbed.length > 0) {
+    console.log(`Embedding and storing final batch of ${documentsToEmbed.length} documents...`)
+    await embedAndStoreDocuments(accessToken, documentsToEmbed)
+  }
+
+  console.log('\n=== Embedding Generation Complete ===')
+  console.log(`Total pages discovered: ${embeddingSources.length}`)
+  console.log(`Pages processed: ${processedCount}`)
+  console.log(`Pages updated: ${updatedCount}`)
+  console.log(`Pages skipped (unchanged): ${skippedCount}`)
+  console.log(`Namespace: ${ZERODB_NAMESPACE}`)
+  console.log(`Model: ${ZERODB_MODEL} (384 dimensions, FREE!)`)
 }
 
 async function main() {
   await generateEmbeddings()
 }
 
-main().catch((err) => console.error(err))
+main().catch((err) => {
+  console.error('Fatal error:', err)
+  process.exit(1)
+})
