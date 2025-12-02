@@ -32,6 +32,7 @@ yarn-error.log*
 .env*.local
 # dotenv environment variables file
 .env
+.env.test
 
 # vercel
 .vercel
