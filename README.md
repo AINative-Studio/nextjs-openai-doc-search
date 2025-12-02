@@ -2,7 +2,7 @@
 
 > **Build semantic search in 5 minutes.** No OpenAI API needed. No separate embedding service. Just ZeroDB's auto-embedding magic.
 
-[![Live Demo](https://img.shields.io/badge/demo-live-brightgreen)](https://doc-search-demo.railway.app) [![ZeroDB](https://img.shields.io/badge/powered_by-ZeroDB-blue)](https://ainative.studio) [![Test Coverage](https://img.shields.io/badge/coverage-89%25-brightgreen)]() [![License](https://img.shields.io/badge/license-Apache%202.0-blue)]()
+[![Live Demo](https://img.shields.io/badge/demo-live-brightgreen)](https://doc-search-demo.railway.app) [![ZeroDB](https://img.shields.io/badge/powered_by-ZeroDB-blue)](https://zerodb.ainative.studio) [![Test Coverage](https://img.shields.io/badge/coverage-89%25-brightgreen)]() [![License](https://img.shields.io/badge/license-Apache%202.0-blue)]()
 
 ---
 
@@ -720,7 +720,7 @@ Apache 2.0 License - see [LICENSE](./LICENSE)
 
 ### Join the Community
 
-- 💬 **[Discord](https://discord.gg/ainative)** - Chat with developers
+- 💬 **[Discord](https://discord.com/invite/paipalooza)** - Chat with developers
 - 🐦 **[Twitter](https://twitter.com/ainativestudio)** - Stay updated
 - 📧 **[Email](mailto:support@ainative.studio)** - Get support
 - 🌐 **[Website](https://ainative.studio)** - Explore more
@@ -742,6 +742,6 @@ If ZeroDB helped you build something awesome:
 
 **Built with ❤️ by the [AINative team](https://ainative.studio)**
 
-[Website](https://ainative.studio) • [Docs](https://docs.ainative.studio) • [Discord](https://discord.gg/ainative) • [Twitter](https://twitter.com/ainativestudio) • [GitHub](https://github.com/AINative-Studio)
+[Website](https://ainative.studio) • [ZeroDB](https://zerodb.ainative.studio) • [Docs](https://docs.ainative.studio) • [Discord](https://discord.com/invite/paipalooza) • [Twitter](https://twitter.com/ainativestudio) • [GitHub](https://github.com/AINative-Studio)
 
 </div>
