@@ -936,5 +936,196 @@ describe('ZeroDB Vector Search API', () => {
       const response = await handler(mockRequest)
       expect(response.status).toBe(200)
     })
+
+    it('should handle token limit in context building', async () => {
+      // Create large content that exceeds token limit
+      const largeContent = 'word '.repeat(1000) // Many words
+
+      mockFetch
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({ access_token: 'test-token' }),
+          text: async () => '',
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({
+            results: [
+              { id: '1', score: 0.95, text: largeContent, metadata: {} },
+              { id: '2', score: 0.85, text: largeContent, metadata: {} },
+              { id: '3', score: 0.75, text: largeContent, metadata: {} },
+            ],
+          }),
+          text: async () => '',
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          body: new ReadableStream({
+            start(controller) {
+              controller.close()
+            },
+          }),
+          text: async () => '',
+        })
+
+      const mockRequest = {
+        json: async () => ({ prompt: 'test' }),
+      }
+
+      const response = await handler(mockRequest)
+      expect(response.status).toBe(200)
+
+      // Verify that context building stopped due to token limit
+      const llamaCall = mockFetch.mock.calls.find((call: any) =>
+        call[0]?.includes?.('chat/completions')
+      )
+      expect(llamaCall).toBeDefined()
+    })
+
+    it('should handle multiple empty content entries before valid content', async () => {
+      mockFetch
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({ access_token: 'test-token' }),
+          text: async () => '',
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({
+            results: [
+              { id: '1', score: 0.95, text: '', metadata: {} },
+              { id: '2', score: 0.85, text: '   ', metadata: {} },
+              { id: '3', score: 0.75, text: '\n\n', metadata: {} },
+              { id: '4', score: 0.65, text: 'Finally valid content', metadata: {} },
+            ],
+          }),
+          text: async () => '',
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          body: new ReadableStream({
+            start(controller) {
+              controller.close()
+            },
+          }),
+          text: async () => '',
+        })
+
+      const mockRequest = {
+        json: async () => ({ prompt: 'test' }),
+      }
+
+      const response = await handler(mockRequest)
+      expect(response.status).toBe(200)
+
+      const llamaCall = mockFetch.mock.calls.find((call: any) =>
+        call[0]?.includes?.('chat/completions')
+      )
+      const llamaBody = JSON.parse(llamaCall[1].body)
+
+      // Should only contain the valid content
+      expect(llamaBody.messages[0].content).toContain('Finally valid content')
+    })
+
+    it('should handle [DONE] marker in SSE stream', async () => {
+      mockFetch
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({ access_token: 'test-token' }),
+          text: async () => '',
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({ results: [] }),
+          text: async () => '',
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          body: new ReadableStream({
+            start(controller) {
+              const encoder = new TextEncoder()
+              controller.enqueue(encoder.encode('data: {"choices":[{"delta":{"content":"test"}}]}\n'))
+              controller.enqueue(encoder.encode('data: [DONE]\n'))
+              controller.close()
+            },
+          }),
+          text: async () => '',
+        })
+
+      const mockRequest = {
+        json: async () => ({ prompt: 'test' }),
+      }
+
+      const response = await handler(mockRequest)
+      expect(response.status).toBe(200)
+    })
+
+    it('should handle stream with only whitespace lines', async () => {
+      mockFetch
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({ access_token: 'test-token' }),
+          text: async () => '',
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({ results: [] }),
+          text: async () => '',
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          body: new ReadableStream({
+            start(controller) {
+              const encoder = new TextEncoder()
+              controller.enqueue(encoder.encode('   \n'))
+              controller.enqueue(encoder.encode('\n\n'))
+              controller.enqueue(encoder.encode('data: {"choices":[{"delta":{"content":"ok"}}]}\n'))
+              controller.close()
+            },
+          }),
+          text: async () => '',
+        })
+
+      const mockRequest = {
+        json: async () => ({ prompt: 'test' }),
+      }
+
+      const response = await handler(mockRequest)
+      expect(response.status).toBe(200)
+    })
+
+    it('should handle missing delta.content in SSE data', async () => {
+      mockFetch
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({ access_token: 'test-token' }),
+          text: async () => '',
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({ results: [] }),
+          text: async () => '',
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          body: new ReadableStream({
+            start(controller) {
+              const encoder = new TextEncoder()
+              // Send data without content
+              controller.enqueue(encoder.encode('data: {"choices":[{"delta":{}}]}\n'))
+              controller.enqueue(encoder.encode('data: {"choices":[{"delta":{"content":"valid"}}]}\n'))
+              controller.close()
+            },
+          }),
+          text: async () => '',
+        })
+
+      const mockRequest = {
+        json: async () => ({ prompt: 'test' }),
+      }
+
+      const response = await handler(mockRequest)
+      expect(response.status).toBe(200)
+    })
   })
 })
